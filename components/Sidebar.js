@@ -3,13 +3,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { motion } from "framer-motion";
-import { LayoutDashboard, Zap, Tool, ShoppingBag, MessageSquare, LogOut } from "lucide-react";
+import { LayoutDashboard, Zap, Wrench, ShoppingBag, MessageSquare, LogOut } from "lucide-react";
 import styles from "./Sidebar.module.css";
 
 const routes = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Overview" },
   { href: "/dashboard/generators", icon: Zap, label: "Generators" },
-  { href: "/dashboard/tools", icon: Tool, label: "PrimeTools" },
+  { href: "/dashboard/tools", icon: Wrench, label: "PrimeTools" },
   { href: "/dashboard/shop", icon: ShoppingBag, label: "Shop" },
   { href: "/dashboard/tickets", icon: MessageSquare, label: "Tickets" },
 ];

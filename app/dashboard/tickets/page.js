@@ -1,117 +1,351 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { Send } from "lucide-react";
-import styles from "./tickets.module.css";
+import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Send, Plus, ArrowLeft, Lock } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { useTranslation } from "@/lib/i18n";
+import styles from "./tickets.module.css";
 
 export default function Tickets() {
   const { data: session } = useSession();
-  const [ticketId, setTicketId] = useState(null);
+  const { t } = useTranslation();
+  
+  const [tickets, setTickets] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
+  const [activeTicket, setActiveTicket] = useState(null); // ID of selected channel
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState("");
+  const [msgLoading, setMsgLoading] = useState(false);
+  
+  const [creating, setCreating] = useState(false);
   const [subject, setSubject] = useState("");
-  const [message, setMessage] = useState("");
-  const [chat, setChat] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [category, setCategory] = useState("General");
+  const [desc, setDesc] = useState("");
+  const [createLoading, setCreateLoading] = useState(false);
 
-  const createTicket = async () => {
-    setLoading(true);
+  const messagesEndRef = useRef(null);
+
+  // Fetch list of tickets
+  const fetchTickets = () => {
+    if (!session?.user?.id) return;
+    fetch(`/api-bot/tickets/${session.user.id}`)
+      .then(res => res.json())
+      .then(data => {
+        setTickets(Array.isArray(data) ? data : []);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    fetchTickets();
+  }, [session?.user?.id]);
+
+  // Fetch messages for active ticket
+  useEffect(() => {
+    if (!activeTicket || !session?.user?.id) return;
+    
+    const fetchMsgs = () => {
+      fetch(`/api-bot/tickets/${session.user.id}/${activeTicket}`)
+        .then(res => res.json())
+        .then(data => {
+          if (Array.isArray(data)) setMessages(data);
+        })
+        .catch(console.error);
+    };
+    
+    fetchMsgs();
+    const interval = setInterval(fetchMsgs, 5000); // Poll every 5s
+    return () => clearInterval(interval);
+  }, [activeTicket, session?.user?.id]);
+
+  // Scroll to bottom of chat
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  const handleCreate = async () => {
+    if (!subject || !desc || !session?.user?.id) return;
+    setCreateLoading(true);
+    
     try {
       const res = await fetch("/api-bot/tickets", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userId: "1532347064623698010", // Real integration uses session id
-          username: session?.user?.name || "User",
-          subject: subject,
-          message: message
+          userId: session.user.id,
+          username: session.user.name,
+          subject,
+          category,
+          message: desc
         })
       });
       const data = await res.json();
       if (data.channelId) {
-        setTicketId(data.channelId);
-        setChat([{ sender: "user", text: message }]);
-        setMessage("");
+        setCreating(false);
+        setSubject("");
+        setDesc("");
+        fetchTickets();
+        setActiveTicket(data.channelId);
       }
     } catch(err) {
-      alert("Failed to create ticket");
+      console.error(err);
     }
-    setLoading(false);
+    setCreateLoading(false);
   };
 
-  const sendMessage = () => {
-    if (!message) return;
-    setChat([...chat, { sender: "user", text: message }]);
-    setMessage("");
-    // In a real app, send this to the API so Discord updates
+  const handleSend = async () => {
+    if (!newMessage.trim() || !activeTicket) return;
+    setMsgLoading(true);
+    
+    const text = newMessage;
+    setNewMessage(""); // Optimistic clear
+    
+    try {
+      await fetch(`/api-bot/tickets/${activeTicket}/reply`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: session.user.id,
+          username: session.user.name,
+          message: text
+        })
+      });
+      // Fetch immediately to show the new message
+      const res = await fetch(`/api-bot/tickets/${session?.user?.id}/${activeTicket}`);
+      const data = await res.json();
+      if (Array.isArray(data)) setMessages(data);
+    } catch(err) {
+      console.error(err);
+      setNewMessage(text); // Restore on error
+    }
+    setMsgLoading(false);
   };
+
+  const handleCloseTicket = async () => {
+    if (!activeTicket) return;
+    try {
+      await fetch(`/api-bot/tickets/${activeTicket}/close`, { method: "POST" });
+      fetchTickets();
+      const t = tickets.find(t => t.channelId === activeTicket);
+      if (t) t.status = 'closed';
+      setTickets([...tickets]);
+    } catch(err) {
+      console.error(err);
+    }
+  };
+
+  const getStatusBadge = (status) => {
+    if (status === 'open') return <span className={`${styles.badge} ${styles.badgeOpen}`}>{t("tickets_open")}</span>;
+    if (status === 'closed') return <span className={`${styles.badge} ${styles.badgeClosed}`}>{t("tickets_closed")}</span>;
+    return <span className={`${styles.badge} ${styles.badgePending}`}>{t("tickets_pending")}</span>;
+  };
+
+  if (activeTicket) {
+    const currentTicket = tickets.find(t => t.channelId === activeTicket);
+    const isClosed = currentTicket?.status === 'closed';
+
+    return (
+      <div className={styles.container}>
+        <button className={styles.backBtn} onClick={() => setActiveTicket(null)}>
+          <ArrowLeft size={16} /> {t("tickets_back")}
+        </button>
+        
+        <div className={styles.chatContainer}>
+          <div className={styles.chatHeader}>
+            <div>
+              <h2 className={styles.chatTitle}>{currentTicket?.subject || 'Ticket'}</h2>
+              <div className={styles.chatMeta}>
+                {getStatusBadge(currentTicket?.status)}
+                <span className={styles.chatCategory}>{currentTicket?.category}</span>
+              </div>
+            </div>
+            {!isClosed && (
+              <button className={styles.closeBtn} onClick={handleCloseTicket}>
+                <Lock size={14} /> {t("tickets_close_ticket")}
+              </button>
+            )}
+          </div>
+          
+          <div className={styles.messagesList}>
+            {messages.map((msg, i) => {
+              // msg.isStaff implies they are answering from discord
+              const isMine = !msg.isStaff;
+              
+              // Try to remove [WEB] prefix for my messages if present in raw content
+              let displayContent = msg.content;
+              if (isMine && displayContent.startsWith('[WEB]')) {
+                 const split = displayContent.split('**:**');
+                 if (split.length > 1) displayContent = split.slice(1).join('**:**').trim();
+              }
+
+              return (
+                <div key={msg.id || i} className={`${styles.msgWrapper} ${isMine ? styles.msgMine : styles.msgStaff}`}>
+                  {!isMine && msg.avatar && (
+                    <img src={msg.avatar} alt="" className={styles.msgAvatar} />
+                  )}
+                  <div className={styles.msgContent}>
+                    <div className={styles.msgBubble}>
+                      {displayContent}
+                    </div>
+                    <div className={styles.msgMeta}>
+                      {isMine ? t("tickets_you") : msg.author} • {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+            <div ref={messagesEndRef} />
+          </div>
+          
+          <div className={styles.chatInput}>
+            {isClosed ? (
+              <div className={styles.closedNote}>This ticket is closed.</div>
+            ) : (
+              <>
+                <input 
+                  type="text" 
+                  placeholder={t("tickets_type_message")}
+                  value={newMessage}
+                  onChange={e => setNewMessage(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && handleSend()}
+                  disabled={msgLoading}
+                />
+                <button 
+                  className={styles.sendBtn} 
+                  onClick={handleSend}
+                  disabled={msgLoading || !newMessage.trim()}
+                >
+                  <Send size={18} />
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Support Tickets</h1>
+      <div className={styles.header}>
+        <div>
+          <h1 className={styles.title}>{t("tickets_title")}</h1>
+          <p className={styles.subtitle}>{t("tickets_subtitle")}</p>
+        </div>
+        <button className={styles.newBtn} onClick={() => setCreating(true)}>
+          <Plus size={16} /> {t("tickets_new")}
+        </button>
+      </div>
 
-      {!ticketId ? (
-        <motion.div 
-          className={styles.createTicket}
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-        >
-          <h2>Open a new ticket</h2>
-          <p style={{color: "var(--text-secondary)", marginBottom: "1rem"}}>Our staff is available on Discord and will reply here.</p>
-          
-          <input 
-            type="text" 
-            placeholder="Subject" 
-            value={subject}
-            onChange={(e) => setSubject(e.target.value)}
-          />
-          <input 
-            type="text" 
-            placeholder="Describe your issue..." 
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-          />
-          <button 
-            className={styles.createBtn}
-            onClick={createTicket}
-            disabled={!subject || !message || loading}
+      <AnimatePresence>
+        {creating && (
+          <motion.div 
+            className="modal-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setCreating(false)}
           >
-            {loading ? "Opening..." : "Create Ticket"}
-          </button>
-        </motion.div>
-      ) : (
-        <motion.div 
-          className={styles.chatBox}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          <div className={styles.header}>
-            <h2>{subject}</h2>
-            <span className={styles.status}>Open</span>
-          </div>
-
-          <div className={styles.messages}>
-            {chat.map((msg, i) => (
-              <div key={i} className={`${styles.messageRow} ${styles[msg.sender]}`}>
-                <div className={styles.bubble}>{msg.text}</div>
+            <motion.div 
+              className={styles.modalContent}
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              onClick={e => e.stopPropagation()}
+            >
+              <h2 className={styles.modalTitle}>{t("tickets_new")}</h2>
+              
+              <div className={styles.formGroup}>
+                <label>{t("tickets_subject")}</label>
+                <input 
+                  className={styles.input} 
+                  value={subject} 
+                  onChange={e => setSubject(e.target.value)} 
+                  placeholder={t("tickets_subject")}
+                />
               </div>
-            ))}
-          </div>
+              
+              <div className={styles.formGroup}>
+                <label>{t("tickets_category")}</label>
+                <select 
+                  className={styles.select}
+                  value={category}
+                  onChange={e => setCategory(e.target.value)}
+                >
+                  <option value="General">{t("tickets_cat_general")}</option>
+                  <option value="Billing">{t("tickets_cat_billing")}</option>
+                  <option value="Bug Report">{t("tickets_cat_bug")}</option>
+                  <option value="Other">{t("tickets_cat_other")}</option>
+                </select>
+              </div>
 
-          <div className={styles.inputArea}>
-            <input 
-              type="text" 
-              className={styles.input} 
-              placeholder="Type your message..."
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-            />
-            <button className={styles.sendBtn} onClick={sendMessage}>
-              <Send size={20} />
-            </button>
-          </div>
-        </motion.div>
+              <div className={styles.formGroup}>
+                <label>{t("tickets_describe")}</label>
+                <textarea 
+                  className={styles.textarea} 
+                  value={desc} 
+                  onChange={e => setDesc(e.target.value)} 
+                  placeholder={t("tickets_describe")}
+                  rows={4}
+                />
+              </div>
+              
+              <div className={styles.modalActions}>
+                <button className="btn-ghost" onClick={() => setCreating(false)}>{t("gen_close")}</button>
+                <button 
+                  className="btn-primary" 
+                  onClick={handleCreate}
+                  disabled={!subject || !desc || createLoading}
+                >
+                  {createLoading ? t("tickets_creating") : t("tickets_create")}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {loading ? (
+        <div className={styles.loading}>{t("loading")}</div>
+      ) : tickets.length === 0 ? (
+        <div className={styles.emptyCard}>
+          <MessageSquare size={32} className={styles.emptyIcon} />
+          <h3>{t("tickets_no_tickets")}</h3>
+        </div>
+      ) : (
+        <div className={styles.ticketList}>
+          {tickets.map(ticket => (
+            <motion.div 
+              key={ticket.id} 
+              className={styles.ticketCard}
+              whileHover={{ scale: 1.01 }}
+              onClick={() => setActiveTicket(ticket.channelId)}
+            >
+              <div className={styles.ticketTop}>
+                <h3 className={styles.ticketSubject}>{ticket.subject}</h3>
+                {getStatusBadge(ticket.status)}
+              </div>
+              <div className={styles.ticketMid}>
+                <span className={styles.ticketCategory}>{ticket.category}</span>
+                <span className={styles.ticketDate}>
+                  {new Date(ticket.createdAt).toLocaleDateString()}
+                </span>
+              </div>
+              <div className={styles.ticketBottom}>
+                {ticket.lastMessage ? (
+                  <p className={styles.lastMessagePreview}>
+                    <strong>{ticket.lastMessage.author}:</strong> {ticket.lastMessage.content}
+                  </p>
+                ) : (
+                  <p className={styles.lastMessagePreview}>No messages yet.</p>
+                )}
+              </div>
+            </motion.div>
+          ))}
+        </div>
       )}
     </div>
   );

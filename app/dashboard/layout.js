@@ -3,7 +3,7 @@
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import Sidebar from "@/components/Sidebar";
+import Topbar from "@/components/Topbar";
 import styles from "./layout.module.css";
 
 export default function DashboardLayout({ children }) {
@@ -16,11 +16,17 @@ export default function DashboardLayout({ children }) {
     }
   }, [status, router]);
 
-  if (status === "loading" || status === "unauthenticated") return null;
+  if (status === "loading" || status === "unauthenticated") {
+    return (
+      <div className={styles.loadingScreen}>
+        <div className={styles.spinner}></div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.layout}>
-      <Sidebar />
+      <Topbar />
       <main className={styles.content}>{children}</main>
     </div>
   );

@@ -34,6 +34,10 @@ export default function AdminPanel() {
   const [restockCombos, setRestockCombos] = useState("");
   const [restockLoading, setRestockLoading] = useState(false);
 
+  // Shop
+  const [shopItems, setShopItems] = useState([]);
+  const [newShopItem, setNewShopItem] = useState({ id: "", name: "", price: "", features: "", style: "premium", badge: "" });
+
   if (status === "loading") return null;
   if (session?.user?.id !== ADMIN_ID) {
     redirect("/dashboard/generators");
@@ -59,7 +63,8 @@ export default function AdminPanel() {
       fetch('/api-bot/leaderboard').then(r => r.ok ? r.json() : []),
       fetch('/api-bot/admin/staff').then(r => r.ok ? r.json() : []),
       fetch('/api-bot/admin/maintenance').then(r => r.ok ? r.json() : null),
-    ]).then(([s, u, st, maint]) => {
+      fetch('/api-bot/shop').then(r => r.ok ? r.json() : []),
+    ]).then(([s, u, st, maint, shop]) => {
       setServices(Array.isArray(s) ? s : []);
       setUsers(Array.isArray(u) ? u : []);
       setStaffIds(Array.isArray(st) ? st : ["1178305844698435625"]);
@@ -67,9 +72,38 @@ export default function AdminPanel() {
         setMaintenance(maint.maintenance);
         setMaintenanceMsg(maint.message || "");
       }
+      setShopItems(Array.isArray(shop) ? shop : []);
       setLoading(false);
     }).catch(() => setLoading(false));
   }, []);
+
+  // Save Shop
+  const saveShopItems = async (newItems) => {
+    try {
+      const res = await fetch('/api-bot/admin/shop', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ shopItems: newItems })
+      });
+      if (res.ok) {
+        setShopItems(newItems);
+        showNotif("Boutique mise à jour !");
+      }
+    } catch(e) {
+      showNotif("Erreur de sauvegarde de la boutique", "error");
+    }
+  };
+
+  const addShopItem = () => {
+    if (!newShopItem.name || !newShopItem.price) return;
+    const item = { ...newShopItem, id: newShopItem.name.toLowerCase().replace(/\s+/g, '_'), features: newShopItem.features.split('\n').filter(f => f.trim()) };
+    saveShopItems([...shopItems, item]);
+    setNewShopItem({ id: "", name: "", price: "", features: "", style: "premium", badge: "" });
+  };
+
+  const removeShopItem = (id) => {
+    saveShopItems(shopItems.filter(s => s.id !== id));
+  };
 
   // Staff CRUD
   const saveStaffIds = async (newIds) => {
@@ -483,6 +517,40 @@ export default function AdminPanel() {
                   <button className={styles.addStaffBtn} onClick={addStaffId}><Plus size={16} /> Ajouter</button>
                 </div>
               </div>
+              {/* Shop Management */}
+              <div className={styles.configCard}>
+                <h3><Package size={18} /> Gestion de la Boutique</h3>
+                <div className={styles.configRow}>
+                  <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.85rem", margin: 0, paddingBottom: "10px" }}>
+                    Ajoute, modifie ou supprime des articles (Premium, Nitro, Serveur Boost...).
+                  </p>
+                </div>
+                <div className={styles.staffList}>
+                  {shopItems.map(item => (
+                    <div key={item.id} className={styles.staffItem}>
+                      <div>
+                        <span className={styles.staffId}>{item.name}</span>
+                        <span style={{color:"#00f0ff", marginLeft:"10px", fontSize:"0.8rem"}}>{item.price}€</span>
+                      </div>
+                      <button className={styles.staffRemoveBtn} onClick={() => removeShopItem(item.id)}>
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                <div style={{display:"flex", flexDirection:"column", gap:"8px", marginTop:"10px"}}>
+                  <input type="text" placeholder="Nom (ex: Nitro Boost)" value={newShopItem.name} onChange={e => setNewShopItem({...newShopItem, name: e.target.value})} className={styles.addStaffInput} />
+                  <input type="text" placeholder="Prix (ex: 3.50)" value={newShopItem.price} onChange={e => setNewShopItem({...newShopItem, price: e.target.value})} className={styles.addStaffInput} />
+                  <select value={newShopItem.style} onChange={e => setNewShopItem({...newShopItem, style: e.target.value})} className={styles.addStaffInput}>
+                    <option value="premium">Style Premium (Rose)</option>
+                    <option value="prime">Style Prime (Bleu)</option>
+                  </select>
+                  <input type="text" placeholder="Badge (ex: Best Seller) - Optionnel" value={newShopItem.badge} onChange={e => setNewShopItem({...newShopItem, badge: e.target.value})} className={styles.addStaffInput} />
+                  <textarea placeholder="Caractéristiques (1 par ligne)" value={newShopItem.features} onChange={e => setNewShopItem({...newShopItem, features: e.target.value})} className={styles.addStaffInput} rows={3} />
+                  <button className={styles.addStaffBtn} onClick={addShopItem} style={{justifyContent:"center"}}><Plus size={16} /> Ajouter l'article</button>
+                </div>
+              </div>
+
             </div>
           </motion.div>
         )}

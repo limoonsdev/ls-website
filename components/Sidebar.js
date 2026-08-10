@@ -12,10 +12,13 @@ const routes = [
   { href: "/dashboard/tools", icon: Wrench, label: "PrimeTools" },
   { href: "/dashboard/shop", icon: ShoppingBag, label: "Shop" },
   { href: "/dashboard/tickets", icon: MessageSquare, label: "Tickets" },
+  { href: "/dashboard/admin", icon: Wrench, label: "Panel Admin", adminOnly: true },
 ];
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const { data: session } = useSession();
+  const isAdmin = session?.user?.id === "1178305844698435625";
 
   return (
     <aside className={styles.sidebar}>
@@ -25,9 +28,10 @@ export default function Sidebar() {
 
       <nav className={styles.nav}>
         {routes.map((route) => {
+          if (route.adminOnly && !isAdmin) return null;
           const isActive = pathname === route.href;
           return (
-            <Link key={route.href} href={route.href} className={`${styles.link} ${isActive ? styles.active : ""}`}>
+            <Link key={route.href} href={route.href} className={`${styles.link} ${isActive ? styles.active : ""} ${route.adminOnly ? styles.adminLink : ""}`}>
               <route.icon className={styles.icon} />
               {route.label}
               {isActive && (

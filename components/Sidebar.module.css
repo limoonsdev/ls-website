@@ -82,3 +82,10 @@
 .logoutBtn:hover {
   color: #ff4b4b;
 }
+
+.adminLink {
+  color: #ff4785 !important;
+}
+.adminLink:hover {
+  background: rgba(255, 71, 133, 0.1) !important;
+}

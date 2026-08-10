@@ -1,0 +1,300 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 1200px;
+  position: relative;
+}
+
+/* Notification */
+.notif {
+  position: fixed;
+  top: 100px;
+  right: 30px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 24px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  z-index: 99999;
+  backdrop-filter: blur(20px);
+}
+.success { background: rgba(0,255,136,0.12); color: #00ff88; border: 1px solid rgba(0,255,136,0.2); }
+.error { background: rgba(255,71,133,0.12); color: #ff4785; border: 1px solid rgba(255,71,133,0.2); }
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.title {
+  font-size: 2rem;
+  font-weight: 800;
+  margin: 0;
+  background: linear-gradient(135deg, #ff4785, #ff7b9f);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.subtitle {
+  color: rgba(255,255,255,0.4);
+  margin: 4px 0 0 0;
+}
+.adminBadge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,71,133,0.1);
+  color: #ff4785;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  border: 1px solid rgba(255,71,133,0.2);
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 6px;
+  background: rgba(10,15,25,0.5);
+  padding: 6px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: rgba(255,255,255,0.45);
+  font-weight: 600;
+  font-size: 0.85rem;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+.tabActive {
+  background: rgba(255,71,133,0.12);
+  color: #ff4785;
+  box-shadow: 0 0 15px rgba(255,71,133,0.08);
+}
+.tab:hover:not(.tabActive) {
+  color: rgba(255,255,255,0.7);
+  background: rgba(255,255,255,0.03);
+}
+
+/* Stats Grid */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.statCard {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.3rem;
+  background: rgba(15,20,35,0.5);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 14px;
+  backdrop-filter: blur(10px);
+  transition: border-color 0.3s;
+}
+.statCard:hover { border-color: rgba(0,240,255,0.15); }
+.statIcon {
+  width: 50px; height: 50px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(0,240,255,0.1);
+  color: #00f0ff;
+  flex-shrink: 0;
+}
+.statInfo { display: flex; flex-direction: column; gap: 2px; }
+.statValue { color: white; font-size: 1.5rem; font-weight: 800; }
+.statLabel { color: rgba(255,255,255,0.4); font-size: 0.8rem; }
+
+/* Section Headers */
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+.sectionHeader h3 { color: white; font-size: 1.1rem; margin: 0; }
+.refreshBtn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 8px 16px; border-radius: 10px;
+  background: rgba(0,240,255,0.08); color: #00f0ff;
+  border: 1px solid rgba(0,240,255,0.15);
+  font-weight: 600; font-size: 0.85rem;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+.refreshBtn:hover { background: rgba(0,240,255,0.15); }
+
+/* Quick Section */
+.quickSection { margin-top: 0.5rem; }
+.quickSection h3 { color: white; font-size: 1.1rem; margin: 0 0 1rem 0; }
+.popularList { display: flex; flex-direction: column; gap: 8px; }
+.popularItem {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px;
+  background: rgba(15,20,35,0.4);
+  border: 1px solid rgba(255,255,255,0.04);
+  border-radius: 12px;
+  transition: all 0.2s;
+}
+.popularItem:hover { border-color: rgba(0,240,255,0.12); transform: translateX(4px); }
+.popularIcon { width: 32px; height: 32px; border-radius: 8px; object-fit: contain; }
+.popularName { color: white; font-weight: 600; flex: 1; }
+.popularStock {
+  color: #00f0ff; font-weight: 700; font-size: 0.95rem;
+  background: rgba(0,240,255,0.08); padding: 4px 12px;
+  border-radius: 8px;
+}
+
+/* Stock Table */
+.stockTable {
+  background: rgba(10,15,25,0.4);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.stockHeader {
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+  padding: 14px 20px;
+  background: rgba(255,255,255,0.02);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  color: rgba(255,255,255,0.4);
+  font-size: 0.8rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 1px;
+}
+.stockRow {
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+  padding: 12px 20px;
+  align-items: center;
+  border-bottom: 1px solid rgba(255,255,255,0.02);
+  transition: background 0.2s;
+}
+.stockRow:hover { background: rgba(255,255,255,0.02); }
+.stockService { display: flex; align-items: center; gap: 12px; }
+.stockIcon { width: 28px; height: 28px; border-radius: 6px; object-fit: contain; }
+.stockService span { color: white; font-weight: 600; font-size: 0.9rem; }
+.stockCount { color: white; font-weight: 700; }
+.userRank { color: rgba(255,255,255,0.4); font-weight: 700; }
+
+/* Tier Badges */
+.tierBadge {
+  font-size: 0.7rem; font-weight: 700;
+  padding: 3px 10px; border-radius: 6px;
+  text-transform: uppercase; letter-spacing: 0.5px;
+  width: fit-content;
+}
+.tier_free { background: rgba(0,240,255,0.1); color: #00f0ff; }
+.tier_premium { background: rgba(255,71,133,0.1); color: #ff4785; }
+.tier_prime { background: rgba(255,215,0,0.1); color: #ffd700; }
+.tier_gold { background: rgba(255,215,0,0.1); color: #ffd700; }
+.tier_silver { background: rgba(192,192,192,0.1); color: #c0c0c0; }
+.tier_bronze { background: rgba(205,127,50,0.1); color: #cd7f32; }
+
+/* Stock Status */
+.stockStatus { font-size: 0.8rem; font-weight: 600; }
+.stockOnline { color: #00ff88; }
+.stockOffline { color: rgba(255,255,255,0.2); }
+
+/* Chat Mod */
+.chatModList { display: flex; flex-direction: column; gap: 6px; }
+.chatModItem {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px;
+  background: rgba(15,20,35,0.4);
+  border: 1px solid rgba(255,255,255,0.03);
+  border-radius: 12px;
+}
+.chatModAvatar { width: 36px; height: 36px; border-radius: 50%; }
+.chatModInfo { flex: 1; }
+.chatModAuthor {
+  display: flex; align-items: center; gap: 6px;
+  color: rgba(255,255,255,0.6); font-size: 0.8rem; font-weight: 600;
+}
+.chatModText { color: white; font-size: 0.9rem; margin-top: 2px; }
+.chatModTime { color: rgba(255,255,255,0.25); font-size: 0.75rem; }
+
+/* Config */
+.configGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+.configCard {
+  background: rgba(15,20,35,0.5);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 16px;
+  padding: 1.5rem;
+}
+.configCard h3 {
+  display: flex; align-items: center; gap: 10px;
+  color: white; font-size: 1.1rem;
+  margin: 0 0 1.2rem 0;
+}
+.configRow {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  color: rgba(255,255,255,0.5);
+  font-size: 0.9rem;
+}
+.configRow:last-child { border: none; }
+.configValue {
+  color: white; font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem; font-weight: 600;
+  background: rgba(255,255,255,0.04);
+  padding: 4px 10px; border-radius: 6px;
+}
+
+/* Staff Management */
+.staffList {
+  display: flex; flex-direction: column; gap: 8px; margin-bottom: 1rem;
+}
+.staffItem {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 14px; background: rgba(0,0,0,0.2);
+  border: 1px solid rgba(255,255,255,0.05); border-radius: 8px;
+}
+.staffId { color: white; font-family: monospace; font-size: 0.9rem; }
+.staffRemoveBtn {
+  background: rgba(255,71,133,0.1); color: #ff4785;
+  border: none; border-radius: 6px; padding: 6px;
+  cursor: pointer; display: flex; align-items: center;
+  transition: all 0.2s;
+}
+.staffRemoveBtn:hover { background: rgba(255,71,133,0.2); }
+.superAdminBadge {
+  font-size: 0.7rem; font-weight: 700; color: #ff4785;
+  background: rgba(255,71,133,0.1); padding: 4px 8px; border-radius: 6px;
+}
+.addStaffForm { display: flex; gap: 8px; }
+.addStaffInput {
+  flex: 1; padding: 10px 14px;
+  background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px; color: white; outline: none;
+}
+.addStaffInput:focus { border-color: #00f0ff; }
+.addStaffBtn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 0 16px; background: linear-gradient(135deg, #00f0ff, #0080ff);
+  color: black; font-weight: 600; border: none; border-radius: 8px;
+  cursor: pointer; transition: all 0.2s;
+}
+.addStaffBtn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,240,255,0.3); }
+
+@media (max-width: 900px) {
+  .statsGrid { grid-template-columns: repeat(2, 1fr); }
+  .configGrid { grid-template-columns: 1fr; }
+  .tabs { overflow-x: auto; }
+  .stockHeader, .stockRow { grid-template-columns: 2fr 1fr 1fr; }
+  .stockStatus { display: none; }
+}

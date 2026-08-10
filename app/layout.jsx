@@ -1,5 +1,6 @@
 import AuthProvider from '@/components/AuthProvider';
 import { I18nProvider } from '@/lib/i18n';
+import MaintenanceWrapper from '@/components/MaintenanceWrapper';
 import './globals.css';
 
 export const metadata = {
@@ -17,7 +18,9 @@ export default function RootLayout({ children }) {
             <div className="bg-grid"></div>
             <div className="bg-glow"></div>
             <div className="bg-glow-bottom"></div>
-            {children}
+            <MaintenanceWrapper>
+              {children}
+            </MaintenanceWrapper>
           </I18nProvider>
         </AuthProvider>
       </body>

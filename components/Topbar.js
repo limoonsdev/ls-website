@@ -3,7 +3,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
-import { LayoutDashboard, Zap, Wrench, ShoppingBag, MessageSquare, Trophy, Clock, LogOut, Menu, X } from "lucide-react";
+import { LayoutDashboard, Zap, Mail, ShoppingBag, MessageSquare, Trophy, Clock, LogOut, Menu, X } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
 import { useState } from "react";
 import styles from "./Topbar.module.css";
@@ -11,7 +11,7 @@ import styles from "./Topbar.module.css";
 const routes = [
   { href: "/dashboard", icon: LayoutDashboard, labelKey: "nav_overview" },
   { href: "/dashboard/generators", icon: Zap, labelKey: "nav_generators" },
-  { href: "/dashboard/tools", icon: Wrench, labelKey: "nav_tools" },
+  { href: "/dashboard/tools", icon: Mail, labelKey: "nav_tools" },
   { href: "/dashboard/shop", icon: ShoppingBag, labelKey: "nav_shop" },
   { href: "/dashboard/tickets", icon: MessageSquare, labelKey: "nav_tickets" },
   { href: "/dashboard/leaderboard", icon: Trophy, labelKey: "nav_leaderboard" },

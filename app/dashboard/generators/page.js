@@ -152,6 +152,8 @@ export default function Generators() {
                   src={service.iconUrl}
                   alt={service.label}
                   className={styles.serviceIcon}
+                  crossOrigin="anonymous"
+                  referrerPolicy="no-referrer"
                   onError={(e) => { e.target.style.display = 'none'; }}
                 />
                 <div className={styles.cardInfo}>

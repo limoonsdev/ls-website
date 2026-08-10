@@ -139,56 +139,52 @@ export default function Generators() {
         <div className={styles.loading}>{t("loading")}</div>
       ) : (
         <div className={styles.grid}>
-          <AnimatePresence mode="popLayout">
-            {filtered.map((service, i) => (
-              <motion.div
-                key={service.id}
-                className={styles.card}
-                layout
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ delay: i * 0.03, duration: 0.25 }}
-              >
-                <div className={styles.cardTop}>
-                  <img
-                    src={service.iconUrl}
-                    alt={service.label}
-                    className={styles.serviceIcon}
-                    onError={(e) => { e.target.style.display = 'none'; }}
-                  />
-                  <div className={styles.cardInfo}>
-                    <h3 className={styles.serviceName}>{service.label}</h3>
-                    <div className={styles.cardMeta}>
-                      <span className={`${styles.tierBadge} ${getTierClass(service.tier)}`}>
-                        {service.tier.toUpperCase()}
-                      </span>
-                      <span className={styles.stock}>
-                        {t("gen_stock")}: <strong>{service.stock ?? '?'}</strong>
-                      </span>
-                    </div>
+          {filtered.map((service, i) => (
+            <motion.div
+              key={service.id}
+              className={styles.card}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: i * 0.03, duration: 0.25 }}
+            >
+              <div className={styles.cardTop}>
+                <img
+                  src={service.iconUrl}
+                  alt={service.label}
+                  className={styles.serviceIcon}
+                  onError={(e) => { e.target.style.display = 'none'; }}
+                />
+                <div className={styles.cardInfo}>
+                  <h3 className={styles.serviceName}>{service.label}</h3>
+                  <div className={styles.cardMeta}>
+                    <span className={`${styles.tierBadge} ${getTierClass(service.tier)}`}>
+                      {service.tier.toUpperCase()}
+                    </span>
+                    <span className={styles.stock}>
+                      {t("gen_stock")}: <strong>{service.stock ?? '?'}</strong>
+                    </span>
                   </div>
                 </div>
+              </div>
 
-                <button
-                  className={styles.generateBtn}
-                  onClick={() => handleGenerate(service)}
-                  disabled={genLoading[service.id] || service.stock === 0}
-                >
-                  {genLoading[service.id] ? (
-                    <span className={styles.btnSpinner}></span>
-                  ) : service.stock === 0 ? (
-                    t("gen_out_of_stock")
-                  ) : (
-                    <>
-                      <Zap size={14} />
-                      {t("gen_generate")}
-                    </>
-                  )}
-                </button>
-              </motion.div>
-            ))}
-          </AnimatePresence>
+              <button
+                className={styles.generateBtn}
+                onClick={() => handleGenerate(service)}
+                disabled={genLoading[service.id] || service.stock === 0}
+              >
+                {genLoading[service.id] ? (
+                  <span className={styles.btnSpinner}></span>
+                ) : service.stock === 0 ? (
+                  t("gen_out_of_stock")
+                ) : (
+                  <>
+                    <Zap size={14} />
+                    {t("gen_generate")}
+                  </>
+                )}
+              </button>
+            </motion.div>
+          ))}
         </div>
       )}
 

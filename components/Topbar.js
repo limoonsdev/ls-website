@@ -3,9 +3,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
-import { LayoutDashboard, Zap, Mail, ShoppingBag, MessageSquare, Trophy, Clock, LogOut, Menu, X } from "lucide-react";
+import { LayoutDashboard, Zap, Mail, ShoppingBag, MessageSquare, Trophy, Clock, LogOut, Menu, X, Wrench } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from "./Topbar.module.css";
 
 const routes = [
@@ -16,7 +16,7 @@ const routes = [
   { href: "/dashboard/tickets", icon: MessageSquare, labelKey: "nav_tickets" },
   { href: "/dashboard/leaderboard", icon: Trophy, labelKey: "nav_leaderboard" },
   { href: "/dashboard/history", icon: Clock, labelKey: "nav_history" },
-  { href: "/dashboard/status", icon: LayoutDashboard, labelKey: "nav_status" },
+  { href: "/dashboard/status", icon: Wrench, labelKey: "nav_status" },
 ];
 
 export default function Topbar() {
@@ -24,6 +24,21 @@ export default function Topbar() {
   const { data: session } = useSession();
   const { lang, switchLang, t } = useTranslation();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    if (session?.user?.id === "1178305844698435625") {
+      setIsAdmin(true);
+    } else if (session?.user?.id) {
+      fetch("/api-bot/admin/staff")
+        .then(r => r.json())
+        .then(data => {
+          if (Array.isArray(data) && data.includes(session.user.id)) {
+            setIsAdmin(true);
+          }
+        }).catch(() => {});
+    }
+  }, [session?.user?.id]);
 
   return (
     <>
@@ -57,6 +72,17 @@ export default function Topbar() {
                 </Link>
               );
             })}
+            
+            {isAdmin && (
+              <Link
+                href="/dashboard/admin"
+                className={`${styles.navLink} ${pathname === "/dashboard/admin" ? styles.active : ""}`}
+                style={{ color: "#ff4785" }}
+              >
+                <Wrench size={16} />
+                <span>Panel Admin</span>
+              </Link>
+            )}
           </nav>
 
           {/* Right Section */}
@@ -124,6 +150,18 @@ export default function Topbar() {
                   </Link>
                 );
               })}
+              
+              {isAdmin && (
+                <Link
+                  href="/dashboard/admin"
+                  className={`${styles.mobileLink} ${pathname === "/dashboard/admin" ? styles.active : ""}`}
+                  onClick={() => setMobileOpen(false)}
+                  style={{ color: "#ff4785" }}
+                >
+                  <Wrench size={18} />
+                  <span>Panel Admin</span>
+                </Link>
+              )}
             </nav>
           </motion.div>
         )}

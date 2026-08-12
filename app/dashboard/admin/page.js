@@ -65,6 +65,26 @@ export default function AdminPanel() {
 
   const router = useRouter();
 
+  useEffect(() => {
+    Promise.all([
+      fetch('/api-bot/services/stock').then(r => r.ok ? r.json() : []),
+      fetch('/api-bot/leaderboard').then(r => r.ok ? r.json() : []),
+      fetch('/api-bot/admin/staff').then(r => r.ok ? r.json() : []),
+      fetch('/api-bot/admin/maintenance').then(r => r.ok ? r.json() : null),
+      fetch('/api-bot/shop').then(r => r.ok ? r.json() : []),
+    ]).then(([s, u, st, maint, shop]) => {
+      setServices(Array.isArray(s) ? s : []);
+      setUsers(Array.isArray(u) ? u : []);
+      setStaffIds(Array.isArray(st) ? st : ["1178305844698435625"]);
+      if (maint) {
+        setMaintenance(maint.maintenance);
+        setMaintenanceMsg(maint.message || "");
+      }
+      setShopItems(Array.isArray(shop) ? shop : []);
+      setLoading(false);
+    }).catch(() => setLoading(false));
+  }, []);
+
   if (status === "loading" || checkingAuth) return null;
   if (!isAuthorized) {
     if (typeof window !== "undefined") {
@@ -86,26 +106,6 @@ export default function AdminPanel() {
         showNotif("Stocks actualisés !");
       });
   };
-
-  useEffect(() => {
-    Promise.all([
-      fetch('/api-bot/services/stock').then(r => r.ok ? r.json() : []),
-      fetch('/api-bot/leaderboard').then(r => r.ok ? r.json() : []),
-      fetch('/api-bot/admin/staff').then(r => r.ok ? r.json() : []),
-      fetch('/api-bot/admin/maintenance').then(r => r.ok ? r.json() : null),
-      fetch('/api-bot/shop').then(r => r.ok ? r.json() : []),
-    ]).then(([s, u, st, maint, shop]) => {
-      setServices(Array.isArray(s) ? s : []);
-      setUsers(Array.isArray(u) ? u : []);
-      setStaffIds(Array.isArray(st) ? st : ["1178305844698435625"]);
-      if (maint) {
-        setMaintenance(maint.maintenance);
-        setMaintenanceMsg(maint.message || "");
-      }
-      setShopItems(Array.isArray(shop) ? shop : []);
-      setLoading(false);
-    }).catch(() => setLoading(false));
-  }, []);
 
   // Save Shop
   const saveShopItems = async (newItems) => {

@@ -15,10 +15,24 @@ const routes = [
   { href: "/dashboard/admin", icon: Wrench, label: "Panel Admin", adminOnly: true },
 ];
 
+import { useState, useEffect } from "react";
+
 export default function Sidebar() {
   const pathname = usePathname();
   const { data: session } = useSession();
-  const isAdmin = session?.user?.id === "1178305844698435625";
+  const [isAdmin, setIsAdmin] = useState(session?.user?.id === "1178305844698435625");
+
+  useEffect(() => {
+    if (session?.user?.id && session.user.id !== "1178305844698435625") {
+      fetch("/api-bot/admin/staff")
+        .then(r => r.json())
+        .then(data => {
+          if (Array.isArray(data) && data.includes(session.user.id)) {
+            setIsAdmin(true);
+          }
+        }).catch(() => {});
+    }
+  }, [session?.user?.id]);
 
   return (
     <aside className={styles.sidebar}>

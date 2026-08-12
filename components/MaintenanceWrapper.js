@@ -10,6 +10,7 @@ export default function MaintenanceWrapper({ children }) {
   const [maintenance, setMaintenance] = useState(false);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     fetch("/api-bot/admin/maintenance")
@@ -22,22 +23,33 @@ export default function MaintenanceWrapper({ children }) {
           setMaintenance(true);
           setMessage(data.message);
         }
-        setLoading(false);
+        
+        if (session?.user?.id === "1178305844698435625") {
+          setIsAdmin(true);
+          setLoading(false);
+        } else if (session?.user?.id) {
+          fetch("/api-bot/admin/staff")
+            .then(r => r.json())
+            .then(staffData => {
+              if (Array.isArray(staffData) && staffData.includes(session.user.id)) {
+                setIsAdmin(true);
+              }
+              setLoading(false);
+            }).catch(() => setLoading(false));
+        } else {
+          setLoading(false);
+        }
       })
       .catch(() => {
         // If we can't reach the backend, we assume no maintenance or backend is down.
-        // For a more strict approach, we could set maintenance to true here if we want to block when API is down.
         setLoading(false);
       });
-  }, []);
+  }, [session?.user?.id]);
 
   // While checking session or fetching maintenance state
   if (status === "loading" || loading) {
     return <div style={{ height: "100vh", display: "flex", alignItems: "center", justifyContent: "center", color: "#00f0ff" }}>Chargement...</div>;
   }
-
-  // Admins bypass maintenance
-  const isAdmin = session?.user?.id === "1178305844698435625";
 
   if (maintenance && !isAdmin) {
     return (

@@ -38,8 +38,33 @@ export default function AdminPanel() {
   const [shopItems, setShopItems] = useState([]);
   const [newShopItem, setNewShopItem] = useState({ id: "", name: "", price: "", features: "", style: "premium", badge: "" });
 
-  if (status === "loading") return null;
-  if (session?.user?.id !== ADMIN_ID) {
+  const [isAuthorized, setIsAuthorized] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
+
+  useEffect(() => {
+    if (status === "loading") return;
+    if (session?.user?.id === ADMIN_ID) {
+      setIsAuthorized(true);
+      setCheckingAuth(false);
+      return;
+    }
+    if (session?.user?.id) {
+      fetch('/api-bot/admin/staff')
+        .then(r => r.ok ? r.json() : [])
+        .then(staff => {
+          if (Array.isArray(staff) && staff.includes(session.user.id)) {
+            setIsAuthorized(true);
+          }
+          setCheckingAuth(false);
+        })
+        .catch(() => setCheckingAuth(false));
+    } else {
+      setCheckingAuth(false);
+    }
+  }, [session, status]);
+
+  if (status === "loading" || checkingAuth) return null;
+  if (!isAuthorized) {
     redirect("/dashboard/generators");
   }
 

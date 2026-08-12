@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Trophy, Medal } from "lucide-react";
+import { Trophy, Medal, Zap } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
 import styles from "./leaderboard.module.css";
 

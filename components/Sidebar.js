@@ -20,10 +20,12 @@ import { useState, useEffect } from "react";
 export default function Sidebar() {
   const pathname = usePathname();
   const { data: session } = useSession();
-  const [isAdmin, setIsAdmin] = useState(session?.user?.id === "1178305844698435625");
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    if (session?.user?.id && session.user.id !== "1178305844698435625") {
+    if (session?.user?.id === "1178305844698435625") {
+      setIsAdmin(true);
+    } else if (session?.user?.id) {
       fetch("/api-bot/admin/staff")
         .then(r => r.json())
         .then(data => {

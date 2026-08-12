@@ -1,0 +1,19 @@
+PrimeGen - Patch v2.2.0 | Build : 9f4a8b2 -> (v2.2.0)
+
+[+] - Ajout
+* Nouvelle page "Status Technique" pour suivre l'état de l'API, la Base de Données, et du Bot Discord en temps réel.
+* Nouveau Scope OAuth2 `guilds.join` pour permettre de rajouter automatiquement les membres au serveur Discord.
+* Sauvegarde automatique des Tokens d'accès des utilisateurs dans la Base de Données lors de la connexion.
+* Système d'Auto-Pull Discord global toutes les 24 heures (Ajout des membres manquant via un cron `setInterval`).
+* Accès dynamique au Panel Admin pour tous les utilisateurs rajoutés à la liste de "Staff" (via Configuration Discord).
+* Nouveau endpoint Backend API `/api/status` (Retourne le Ping WebSockets réel, et l'uptime du Bot en ms).
+* Copie des assets logos en local (`/public/assets`) pour accélérer le chargement des images et réduire la charge de l'API.
+
+[-] - Retrait
+* Le système Hardcodé pour vérifier l'accès au Panel Admin (Maintenant géré de manière flexible).
+* L'ancien Proxy d'images pour le Shop/Generateurs (Les images chargent maintenant directement depuis les assets publics).
+* La fausse simulation du "Status" (Maintenant reliée à l'API).
+
+[~] - Correction
+* Redirection infinie ou fausse sur la page de l'Admin si le compte n'était pas l'owner.
+* Correction des logos et assets manquants sur le Shop et le Générateur.

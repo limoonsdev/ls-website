@@ -16,21 +16,20 @@ export default function StatusPage() {
   });
 
   useEffect(() => {
-    // Simulate fetching status since we don't have a real endpoint yet
     const checkStatus = async () => {
       try {
-        const start = Date.now();
-        const res = await fetch("/api-bot/leaderboard");
-        const ping = Date.now() - start;
-        
-        setStatus({
-          api: res.ok ? "operational" : "outage",
-          database: res.ok ? "operational" : "outage",
-          discord: res.ok ? "operational" : "degraded",
-          ping,
-          uptime: "99.9%",
-          version: "v2.5.0"
-        });
+        const res = await fetch("/api-bot/status");
+        if (res.ok) {
+          const data = await res.json();
+          setStatus({
+            api: data.api,
+            database: data.database,
+            discord: data.discord,
+            ping: data.ping,
+            uptime: data.uptime,
+            version: data.version
+          });
+        }
       } catch (err) {
         setStatus(prev => ({
           ...prev,
@@ -43,7 +42,8 @@ export default function StatusPage() {
     };
     
     checkStatus();
-    const interval = setInterval(checkStatus, 30000);
+    // Fetch every 5 minutes
+    const interval = setInterval(checkStatus, 300000);
     return () => clearInterval(interval);
   }, []);
 

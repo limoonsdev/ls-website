@@ -3,7 +3,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { motion } from "framer-motion";
-import { LayoutDashboard, Zap, Wrench, ShoppingBag, MessageSquare, LogOut } from "lucide-react";
+import { LayoutDashboard, Zap, Wrench, ShoppingBag, MessageSquare, LogOut, Crown } from "lucide-react";
 import styles from "./Sidebar.module.css";
 
 const routes = [
@@ -12,7 +12,7 @@ const routes = [
   { href: "/dashboard/tools", icon: Wrench, label: "PrimeTools" },
   { href: "/dashboard/shop", icon: ShoppingBag, label: "Shop" },
   { href: "/dashboard/tickets", icon: MessageSquare, label: "Tickets" },
-  { href: "/dashboard/admin", icon: Wrench, label: "Panel Admin", adminOnly: true },
+  { href: "/dashboard/admin", icon: Crown, label: "Panel Admin", adminOnly: true },
 ];
 
 import { useState, useEffect } from "react";

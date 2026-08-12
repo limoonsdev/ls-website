@@ -3,7 +3,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
-import { LayoutDashboard, Zap, Mail, ShoppingBag, MessageSquare, Trophy, Clock, LogOut, Menu, X, Wrench } from "lucide-react";
+import { LayoutDashboard, Zap, Mail, ShoppingBag, MessageSquare, Trophy, Clock, LogOut, Menu, X, Wrench, Crown } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
 import { useState, useEffect } from "react";
 import styles from "./Topbar.module.css";
@@ -79,7 +79,7 @@ export default function Topbar() {
                 className={`${styles.navLink} ${pathname === "/dashboard/admin" ? styles.active : ""}`}
                 style={{ color: "#ff4785" }}
               >
-                <Wrench size={16} />
+                <Crown size={16} />
                 <span>Panel Admin</span>
               </Link>
             )}
@@ -158,7 +158,7 @@ export default function Topbar() {
                   onClick={() => setMobileOpen(false)}
                   style={{ color: "#ff4785" }}
                 >
-                  <Wrench size={18} />
+                  <Crown size={18} />
                   <span>Panel Admin</span>
                 </Link>
               )}

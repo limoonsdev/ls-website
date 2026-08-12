@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
@@ -63,9 +63,14 @@ export default function AdminPanel() {
     }
   }, [session, status]);
 
+  const router = useRouter();
+
   if (status === "loading" || checkingAuth) return null;
   if (!isAuthorized) {
-    redirect("/dashboard/generators");
+    if (typeof window !== "undefined") {
+      router.push("/dashboard/generators");
+    }
+    return null;
   }
 
   const showNotif = (msg, type = "success") => {

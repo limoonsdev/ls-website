@@ -327,6 +327,26 @@ export default function AdminPanel() {
                   className={styles.restockTextarea}
                   rows={8}
                 />
+                <div style={{marginTop: "10px"}}>
+                  <label className={styles.addStaffBtn} style={{display: "inline-flex", cursor: "pointer", width: "auto", padding: "8px 16px"}}>
+                    <Upload size={14} style={{marginRight: "8px"}}/> Upload Combo File (.txt)
+                    <input 
+                      type="file" 
+                      accept=".txt" 
+                      style={{display: "none"}}
+                      onChange={(e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onload = (evt) => {
+                            setRestockCombos(prev => (prev ? prev + "\n" + evt.target.result : evt.target.result));
+                          };
+                          reader.readAsText(file);
+                        }
+                      }}
+                    />
+                  </label>
+                </div>
                 <div className={styles.restockActions}>
                   <span className={styles.restockCount}>
                     {restockCombos.split('\n').filter(l => l.trim()).length} comptes détectés
@@ -399,6 +419,15 @@ export default function AdminPanel() {
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             <div className={styles.sectionHeader}>
               <h3>Top Utilisateurs (Leaderboard)</h3>
+              <button className={styles.stockClearBtn} onClick={async () => {
+                if(confirm("⚠️ Confirmer le reset total du classement ?")) {
+                  await fetch('/api-bot/admin/reset-leaderboard', { method: 'POST' });
+                  showNotif("Classement réinitialisé !");
+                  setUsers([]);
+                }
+              }} style={{marginLeft: "10px", width: "auto", padding: "8px 16px"}}>
+                <Trash2 size={16} style={{marginRight:"8px"}}/> Reset Classement
+              </button>
             </div>
             <div className={styles.stockTable}>
               <div className={styles.stockHeader}>
@@ -413,7 +442,7 @@ export default function AdminPanel() {
                     <img src={u.avatar} alt={u.username} className={styles.stockIcon} style={{borderRadius:"50%"}} />
                     <span>{u.username}</span>
                   </div>
-                  <span className={styles.stockCount}>{u.generations?.toLocaleString()}</span>
+                  <span className={styles.stockCount}>{u.total_combos_generated?.toLocaleString()}</span>
                 </div>
               ))}
             </div>

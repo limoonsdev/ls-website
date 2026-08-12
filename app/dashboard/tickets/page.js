@@ -29,8 +29,7 @@ export default function Tickets() {
 
   // Fetch list of tickets
   const fetchTickets = () => {
-    if (!session?.user?.id) return;
-    fetch(`/api-bot/tickets/${session.user.id}`)
+    fetch(`/api/tickets`)
       .then(res => res.json())
       .then(data => {
         setTickets(Array.isArray(data) ? data : []);
@@ -48,7 +47,7 @@ export default function Tickets() {
     if (!activeTicket || !session?.user?.id) return;
     
     const fetchMsgs = () => {
-      fetch(`/api-bot/tickets/${session.user.id}/${activeTicket}`)
+      fetch(`/api/tickets/${activeTicket}`)
         .then(res => res.json())
         .then(data => {
           if (Array.isArray(data)) setMessages(data);

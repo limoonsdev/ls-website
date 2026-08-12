@@ -55,10 +55,20 @@ export default function PrimeMail() {
   };
 
   const createMailbox = async () => {
-    if (domains.length === 0) return;
     setCreating(true);
     try {
-      const domain = domains[0].domain || domains[0];
+      let currentDomains = domains;
+      if (currentDomains.length === 0) {
+        const r = await fetch(`${MAIL_API}/domains`);
+        const data = await r.json();
+        currentDomains = Array.isArray(data["hydra:member"] || data) ? (data["hydra:member"] || data) : [];
+        setDomains(currentDomains);
+      }
+      if (currentDomains.length === 0) {
+        setCreating(false);
+        return;
+      }
+      const domain = currentDomains[0].domain || currentDomains[0];
       const address = `${generateRandomString(12)}@${domain}`;
       const password = generateRandomString(16);
 
@@ -181,7 +191,7 @@ export default function PrimeMail() {
         <button 
           className={styles.createBtn} 
           onClick={createMailbox} 
-          disabled={creating || domains.length === 0}
+          disabled={creating}
         >
           {creating ? (
             <span className={styles.spinner}></span>

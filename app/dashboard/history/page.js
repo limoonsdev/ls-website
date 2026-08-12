@@ -18,8 +18,7 @@ export default function History() {
   const [tierFilter, setTierFilter] = useState("");
 
   useEffect(() => {
-    if (!session?.user?.id) return;
-    let url = `/api-bot/history/${session.user.id}?limit=200`;
+    let url = `/api/history?limit=200`;
     if (serviceFilter) url += `&service=${serviceFilter}`;
     if (tierFilter) url += `&tier=${tierFilter}`;
 

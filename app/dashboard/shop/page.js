@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Check } from "lucide-react";
+import { Check, Star } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
+import { toast } from "react-hot-toast";
 import styles from "./shop.module.css";
 
 export default function Shop() {
@@ -62,7 +63,7 @@ export default function Shop() {
                 ))}
               </div>
 
-              <button className={styles.buyBtn} onClick={() => alert("Système de paiement en cours d'intégration.")}>
+              <button className={styles.buyBtn} onClick={() => toast.error("Système de paiement en cours d'intégration.")}>
                 Acheter {plan.name}
               </button>
             </motion.div>

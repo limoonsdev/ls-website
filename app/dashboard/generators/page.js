@@ -62,10 +62,10 @@ export default function Generators() {
     setGenLoading(prev => ({ ...prev, [service.id]: true }));
 
     try {
-      const res = await fetch("/api-bot/generate", {
+      const res = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ serviceId: service.id, userId: session.user.id })
+        body: JSON.stringify({ serviceId: service.id })
       });
       const data = await res.json();
       if (data.error) {

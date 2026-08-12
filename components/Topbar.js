@@ -16,6 +16,7 @@ const routes = [
   { href: "/dashboard/tickets", icon: MessageSquare, labelKey: "nav_tickets" },
   { href: "/dashboard/leaderboard", icon: Trophy, labelKey: "nav_leaderboard" },
   { href: "/dashboard/history", icon: Clock, labelKey: "nav_history" },
+  { href: "/dashboard/status", icon: LayoutDashboard, labelKey: "nav_status" },
 ];
 
 export default function Topbar() {

@@ -1,0 +1,15 @@
+PrimeGen - Patch v2.1.3 | Build : 9f4a8b2
+
+[+] - Refonte complète de la sécurité de l'API (Protection anti-usurpation d'ID Discord)
+[+] - Sécurisation des routes d'historique et de support technique via clés API et authentification côté serveur (Next.js)
+[+] - Implémentation des pop-ups natives "Toast" élégantes, remplaçant les alertes classiques du navigateur
+[+] - Mise à jour du magasin avec les prix Valorant par défaut (NFA, FA, skins) et Nitro Boost (Gift Links)
+[+] - Ajout du bouton "Reset Classement" dans le Panel Admin
+[+] - Ajout d'une fonctionnalité "Upload Combo File (.txt)" pour faciliter un restock massif dans le Panel Admin
+[+] - Restauration des vérifications de rôles (Gratuit, Premium) et du statut personnalisé (Vanity URL .gg/primegen) dans le générateur
+[+] - Fix du bouton "Créer une boîte" pour le Temp Mail qui se frisait à cause des bloqueurs de publicités
+[+] - Gestion des erreurs Discord dans le Panel Manager pour empêcher le crash du bot lorsque les panneaux sont supprimés
+
+[-] - Retrait de la faille de sécurité permettant de modifier un ID via la console web
+[-] - Retrait des boucles infinies de logs fantômes provoquant des timeouts sur l'API Discord
+[-] - Retrait des alertes système (alert) désuètes sur la page Boutique

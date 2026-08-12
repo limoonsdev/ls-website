@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, Plus, ArrowLeft, Lock } from "lucide-react";
+import { Send, Plus, ArrowLeft, Lock, MessageSquare } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "@/lib/i18n";
 import styles from "./tickets.module.css";

@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Mail, Inbox, Copy, Check, RefreshCw, Plus, Trash2, Eye } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "@/lib/i18n";
+import { toast } from "react-hot-toast";
 import styles from "./tools.module.css";
 
 const MAIL_API = "https://api.mail.tm";
@@ -109,6 +110,7 @@ export default function PrimeMail() {
       setSelectedMsg(null);
     } catch (err) {
       console.error("Mail creation error:", err);
+      toast.error("Erreur réseau. Désactivez votre bloqueur de publicités pour utiliser le Temp Mail.");
     }
     setCreating(false);
   };

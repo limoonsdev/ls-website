@@ -659,10 +659,10 @@ export default function AdminPanel() {
 
         {/* ── TICKETS ── */}
         {activeTab === "tickets" && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className={styles.ticketsGrid} style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '1.5rem' }}>
-            <div className={styles.ticketList} style={{ background: 'rgba(20,20,20,0.5)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '16px', overflow: 'hidden' }}>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className={styles.ticketsGrid}>
+            <div className={styles.ticketList}>
               <h3 style={{ padding: '16px', margin: 0, borderBottom: '1px solid rgba(255,255,255,0.05)', color: 'white' }}>Tickets ({tickets.length})</h3>
-              <div style={{ maxHeight: '600px', overflowY: 'auto', padding: '10px' }}>
+              <div style={{ flex: 1, overflowY: 'auto', padding: '10px', minHeight: 0 }}>
                 {tickets.map(t => (
                   <div 
                     key={t.id} 
@@ -688,7 +688,7 @@ export default function AdminPanel() {
               </div>
             </div>
 
-            <div className={styles.ticketChat} style={{ background: 'rgba(20,20,20,0.5)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '16px', display: 'flex', flexDirection: 'column', height: '650px' }}>
+            <div className={styles.ticketChat}>
               {activeTicket ? (
                 <>
                   <div style={{ padding: '16px', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -705,7 +705,7 @@ export default function AdminPanel() {
                       </button>
                     )}
                   </div>
-                  <div style={{ flex: 1, overflowY: 'auto', padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  <div style={{ flex: 1, overflowY: 'auto', padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px', minHeight: 0 }}>
                     {messages.map((m, i) => {
                       const isMe = m.authorId === session?.user?.id || m.authorName === 'PrimeGen Staff';
                       return (

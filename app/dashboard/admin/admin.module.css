@@ -295,12 +295,57 @@
 }
 .addStaffBtn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(255,255,255,0.3); }
 
-@media (max-width: 900px) {
-  .statsGrid { grid-template-columns: repeat(2, 1fr); }
+/* =========================================
+   RESPONSIVE & FIREFOX FIXES
+   ========================================= */
+
+@media (max-width: 768px) {
+  .statsGrid { grid-template-columns: 1fr; }
   .configGrid { grid-template-columns: 1fr; }
-  .tabs { overflow-x: auto; }
-  .stockHeader, .stockRow { grid-template-columns: 2fr 1fr 1fr 80px; }
-  .stockStatus { display: none; }
+  .tabs { overflow-x: auto; padding-bottom: 5px; }
+  
+  .stockHeader { display: none; }
+  .stockRow { 
+    grid-template-columns: 1fr; 
+    gap: 8px; 
+    padding: 16px;
+    background: rgba(20,20,20,0.3);
+    margin-bottom: 8px;
+    border-radius: 12px;
+  }
+  .stockStatus { display: inline-block; margin-top: 4px; }
+  .stockActions { justify-content: flex-start; margin-top: 8px; }
+}
+
+/* Firefox fix */
+.ticketsGrid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 1.5rem;
+  min-height: 0;
+  min-width: 0;
+}
+@media (max-width: 768px) {
+  .ticketsGrid { grid-template-columns: 1fr; }
+}
+.ticketList {
+  background: rgba(20,20,20,0.5);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  max-height: 600px;
+}
+.ticketChat {
+  background: rgba(20,20,20,0.5);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 650px;
 }
 
 /* Restock Zone */

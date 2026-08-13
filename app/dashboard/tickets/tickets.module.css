@@ -247,6 +247,7 @@
   display: flex;
   flex-direction: column;
   height: 600px;
+  min-height: 0;
   overflow: hidden;
 }
 
@@ -303,6 +304,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+  min-height: 0;
 }
 
 .msgWrapper {
@@ -433,6 +435,30 @@
   .header {
     flex-direction: column;
     gap: 12px;
+  }
+  
+  .msgWrapper {
+    max-width: 90%;
+  }
+}
+/* Responsive & Firefox fixes */
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .chatHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .chatContainer {
+    height: 70vh;
+  }
+  
+  .inputArea {
+    padding: 12px;
   }
   
   .msgWrapper {

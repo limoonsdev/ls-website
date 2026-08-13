@@ -3,7 +3,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
-import { LayoutDashboard, Zap, Mail, ShoppingBag, MessageSquare, Trophy, Clock, LogOut, Menu, X, Wrench, Crown } from "lucide-react";
+import { LayoutDashboard, Zap, Mail, ShoppingBag, MessageSquare, Trophy, Clock, LogOut, Menu, X, Wrench, Crown, Star, FileText } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
 import { useState, useEffect } from "react";
 import styles from "./Topbar.module.css";
@@ -17,6 +17,8 @@ const routes = [
   { href: "/dashboard/leaderboard", icon: Trophy, labelKey: "nav_leaderboard" },
   { href: "/dashboard/history", icon: Clock, labelKey: "nav_history" },
   { href: "/dashboard/status", icon: Wrench, labelKey: "nav_status" },
+  { href: "/dashboard/avis", icon: Star, labelKey: "nav_reviews" },
+  { href: "/dashboard/patchnotes", icon: FileText, labelKey: "nav_patchnotes" },
 ];
 
 export default function Topbar() {

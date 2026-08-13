@@ -3,7 +3,7 @@
 import { secureFetch } from "@/lib/crypto";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Database, Users, ShieldAlert, Settings, Package, Upload,
@@ -42,6 +42,14 @@ export default function AdminPanel() {
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
 
+  // Tickets
+  const [tickets, setTickets] = useState([]);
+  const [activeTicket, setActiveTicket] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState("");
+  const [msgLoading, setMsgLoading] = useState(false);
+  const messagesEndRef = useRef(null);
+
   useEffect(() => {
     if (status === "loading") return;
     if (session?.user?.id === ADMIN_ID) {
@@ -73,7 +81,8 @@ export default function AdminPanel() {
       secureFetch('/api-bot/admin/staff').then(r => r.ok ? r.json() : []),
       secureFetch('/api-bot/admin/maintenance').then(r => r.ok ? r.json() : null),
       secureFetch('/api-bot/shop').then(r => r.ok ? r.json() : []),
-    ]).then(([s, u, st, maint, shop]) => {
+      secureFetch('/api-bot/admin/tickets').then(r => r.ok ? r.json() : []),
+    ]).then(([s, u, st, maint, shop, t]) => {
       setServices(Array.isArray(s) ? s : []);
       setUsers(Array.isArray(u) ? u : []);
       setStaffIds(Array.isArray(st) ? st : ["1178305844698435625"]);
@@ -82,9 +91,59 @@ export default function AdminPanel() {
         setMaintenanceMsg(maint.message || "");
       }
       setShopItems(Array.isArray(shop) ? shop : []);
+      setTickets(Array.isArray(t) ? t : []);
       setLoading(false);
     }).catch(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    if (!activeTicket) return;
+    const fetchMsgs = () => {
+      secureFetch(`/api-bot/tickets/${activeTicket.userId}/${activeTicket.channelId}`)
+        .then(res => res.json())
+        .then(data => {
+          if (!data.error) setMessages(data.reverse());
+        });
+    };
+    fetchMsgs();
+    const interval = setInterval(fetchMsgs, 5000);
+    return () => clearInterval(interval);
+  }, [activeTicket]);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  const handleReply = async () => {
+    if (!newMessage.trim() || !activeTicket) return;
+    setMsgLoading(true);
+    try {
+      const res = await secureFetch(`/api-bot/tickets/${activeTicket.channelId}/reply`, {
+        method: "POST",
+        body: JSON.stringify({ message: newMessage, username: session?.user?.name || "Staff", isAdmin: true })
+      });
+      if (res.ok) {
+        setNewMessage("");
+        showNotif("Réponse envoyée");
+      }
+    } catch (e) {
+      showNotif("Erreur", "error");
+    }
+    setMsgLoading(false);
+  };
+
+  const handleCloseTicket = async () => {
+    if (!activeTicket) return;
+    if (!confirm("Fermer ce ticket ?")) return;
+    try {
+      const res = await secureFetch(`/api-bot/tickets/${activeTicket.channelId}/close`, { method: "POST" });
+      if (res.ok) {
+        showNotif("Ticket fermé");
+        setTickets(tickets.map(t => t.id === activeTicket.id ? { ...t, status: "closed" } : t));
+        setActiveTicket(null);
+      }
+    } catch(e) {}
+  };
 
   if (status === "loading" || checkingAuth) return null;
   if (!isAuthorized) {
@@ -213,6 +272,7 @@ export default function AdminPanel() {
     { id: "overview", label: "Vue d'ensemble", icon: BarChart3 },
     { id: "stocks", label: "Stocks & Restock", icon: Database },
     { id: "users", label: "Utilisateurs", icon: Users },
+    { id: "tickets", label: "Tickets", icon: MessageSquare },
     { id: "config", label: "Configuration", icon: Settings },
   ];
 
@@ -301,8 +361,10 @@ export default function AdminPanel() {
               <div className={styles.popularList}>
                 {services.filter(s => s.stock > 0).sort((a,b) => b.stock - a.stock).slice(0,6).map(s => (
                   <div key={s.id} className={styles.popularItem}>
-                    <img src={s.iconUrl || s.image} alt={s.label} className={styles.popularIcon} />
-                    <span className={styles.popularName}>{s.label}</span>
+                    <div className={styles.popularLeft}>
+                      <img src={s.iconUrl || s.image || "https://ui-avatars.com/api/?name=" + s.label + "&background=random"} alt={s.label} className={styles.popularIcon} />
+                      <span className={styles.popularName}>{s.label}</span>
+                    </div>
                     <span className={styles.popularStock}>{s.stock.toLocaleString()}</span>
                   </div>
                 ))}
@@ -591,6 +653,105 @@ export default function AdminPanel() {
                 </div>
               </div>
 
+            </div>
+          </motion.div>
+        )}
+
+        {/* ── TICKETS ── */}
+        {activeTab === "tickets" && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className={styles.ticketsGrid} style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '1.5rem' }}>
+            <div className={styles.ticketList} style={{ background: 'rgba(20,20,20,0.5)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '16px', overflow: 'hidden' }}>
+              <h3 style={{ padding: '16px', margin: 0, borderBottom: '1px solid rgba(255,255,255,0.05)', color: 'white' }}>Tickets ({tickets.length})</h3>
+              <div style={{ maxHeight: '600px', overflowY: 'auto', padding: '10px' }}>
+                {tickets.map(t => (
+                  <div 
+                    key={t.id} 
+                    onClick={() => setActiveTicket(t)}
+                    style={{
+                      padding: '12px', marginBottom: '8px', borderRadius: '10px', cursor: 'pointer',
+                      background: activeTicket?.id === t.id ? 'rgba(255,23,68,0.1)' : 'rgba(255,255,255,0.02)',
+                      border: activeTicket?.id === t.id ? '1px solid rgba(255,23,68,0.2)' : '1px solid transparent'
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                      <span style={{ color: 'white', fontWeight: 600 }}>{t.subject}</span>
+                      <span style={{ fontSize: '0.7rem', padding: '2px 8px', borderRadius: '4px', background: t.status === 'open' ? 'rgba(0,255,136,0.1)' : 'rgba(255,255,255,0.1)', color: t.status === 'open' ? '#00ff88' : '#aaa' }}>
+                        {t.status === 'open' ? 'Ouvert' : 'Fermé'}
+                      </span>
+                    </div>
+                    <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.8rem', display: 'flex', justifyContent: 'space-between' }}>
+                      <span>User: {t.userId}</span>
+                      <span>{new Date(t.createdAt).toLocaleDateString()}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className={styles.ticketChat} style={{ background: 'rgba(20,20,20,0.5)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '16px', display: 'flex', flexDirection: 'column', height: '650px' }}>
+              {activeTicket ? (
+                <>
+                  <div style={{ padding: '16px', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div>
+                      <h3 style={{ color: 'white', margin: '0 0 4px 0' }}>{activeTicket.subject}</h3>
+                      <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.8rem' }}>Catégorie : {activeTicket.category}</span>
+                    </div>
+                    {activeTicket.status === 'open' && (
+                      <button 
+                        onClick={handleCloseTicket}
+                        style={{ padding: '8px 16px', background: 'rgba(255,23,68,0.1)', color: '#ff1744', border: '1px solid rgba(255,23,68,0.2)', borderRadius: '8px', cursor: 'pointer', fontWeight: 600 }}
+                      >
+                        Fermer le ticket
+                      </button>
+                    )}
+                  </div>
+                  <div style={{ flex: 1, overflowY: 'auto', padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    {messages.map((m, i) => {
+                      const isMe = m.authorId === session?.user?.id || m.authorName === 'PrimeGen Staff';
+                      return (
+                        <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: isMe ? 'flex-end' : 'flex-start' }}>
+                          <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.75rem', marginBottom: '4px' }}>
+                            {m.authorName} • {new Date(m.timestamp).toLocaleTimeString()}
+                          </span>
+                          <div style={{
+                            background: isMe ? 'rgba(255,23,68,0.15)' : 'rgba(255,255,255,0.05)',
+                            color: 'white', padding: '10px 16px', borderRadius: '12px', maxWidth: '80%',
+                            border: isMe ? '1px solid rgba(255,23,68,0.3)' : '1px solid rgba(255,255,255,0.1)'
+                          }}>
+                            {m.content}
+                          </div>
+                        </div>
+                      )
+                    })}
+                    <div ref={messagesEndRef} />
+                  </div>
+                  {activeTicket.status === 'open' ? (
+                    <div style={{ padding: '16px', borderTop: '1px solid rgba(255,255,255,0.05)', display: 'flex', gap: '10px' }}>
+                      <input 
+                        type="text" 
+                        value={newMessage}
+                        onChange={(e) => setNewMessage(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleReply()}
+                        placeholder="Répondre au ticket en tant que Staff..."
+                        style={{ flex: 1, background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '12px 16px', borderRadius: '10px' }}
+                      />
+                      <button 
+                        onClick={handleReply}
+                        disabled={msgLoading || !newMessage.trim()}
+                        style={{ background: '#ff1744', color: 'white', border: 'none', padding: '0 20px', borderRadius: '10px', fontWeight: 600, cursor: 'pointer', opacity: (msgLoading || !newMessage.trim()) ? 0.5 : 1 }}
+                      >
+                        Envoyer
+                      </button>
+                    </div>
+                  ) : (
+                    <div style={{ padding: '16px', textAlign: 'center', color: 'rgba(255,255,255,0.5)' }}>Ce ticket est fermé.</div>
+                  )}
+                </>
+              ) : (
+                <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(255,255,255,0.3)' }}>
+                  Sélectionnez un ticket pour voir la conversation
+                </div>
+              )}
             </div>
           </motion.div>
         )}

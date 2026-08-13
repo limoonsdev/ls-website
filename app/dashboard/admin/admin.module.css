@@ -144,20 +144,24 @@
 .quickSection h3 { color: white; font-size: 1.1rem; margin: 0 0 1rem 0; }
 .popularList { display: flex; flex-direction: column; gap: 8px; }
 .popularItem {
-  display: flex; align-items: center; gap: 12px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
   padding: 12px 16px;
   background: rgba(20,20,20,0.4);
   border: 1px solid rgba(255,255,255,0.04);
   border-radius: 12px;
   transition: all 0.2s;
 }
+.popularLeft {
+  display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0;
+}
 .popularItem:hover { border-color: rgba(255,255,255,0.12); transform: translateX(4px); }
-.popularIcon { width: 32px; height: 32px; border-radius: 8px; object-fit: contain; }
-.popularName { color: white; font-weight: 600; flex: 1; }
+.popularIcon { width: 32px; height: 32px; border-radius: 8px; object-fit: contain; flex-shrink: 0; background: rgba(255,255,255,0.05); color: transparent; }
+.popularName { color: white; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .popularStock {
   color: #ffffff; font-weight: 700; font-size: 0.95rem;
   background: rgba(255,255,255,0.08); padding: 4px 12px;
   border-radius: 8px;
+  flex-shrink: 0;
 }
 
 /* Stock Table */

@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Zap, Copy, Check, X, Search } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "@/lib/i18n";
+import Image from "next/image";
 import styles from "./generators.module.css";
 
 const CATEGORIES = [
@@ -149,12 +150,16 @@ export default function Generators() {
               transition={{ delay: i * 0.03, duration: 0.25 }}
             >
               <div className={styles.cardTop}>
-                <img
-                  src={service.iconUrl}
-                  alt={service.label}
-                  className={styles.serviceIcon}
-                  onError={(e) => { e.target.style.display = 'none'; }}
-                />
+                <div style={{position: 'relative', width: 40, height: 40, flexShrink: 0}}>
+                  <Image
+                    src={service.iconUrl}
+                    alt={service.label}
+                    fill
+                    sizes="40px"
+                    style={{objectFit: 'contain'}}
+                    onError={(e) => { e.target.style.display = 'none'; }}
+                  />
+                </div>
                 <div className={styles.cardInfo}>
                   <h3 className={styles.serviceName}>{service.label}</h3>
                   <div className={styles.cardMeta}>

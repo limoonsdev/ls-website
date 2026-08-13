@@ -104,14 +104,10 @@ export default function Tickets() {
     setNewMessage(""); // Optimistic clear
     
     try {
-      await secureFetch(`/api-bot/tickets/${activeTicket}/reply`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId: session.user.id,
-          username: session.user.name,
-          message: text
-        })
+      await secureFetch(`/api-bot/tickets/${activeTicket}/reply`, 'POST', {
+        userId: session.user.id,
+        username: session.user.name,
+        message: text
       });
       // Fetch immediately to show the new message
       const res = await secureFetch(`/api-bot/tickets/${session?.user?.id}/${activeTicket}`);
@@ -127,7 +123,7 @@ export default function Tickets() {
   const handleCloseTicket = async () => {
     if (!activeTicket) return;
     try {
-      await secureFetch(`/api-bot/tickets/${activeTicket}/close`, { method: "POST" });
+      await secureFetch(`/api-bot/tickets/${activeTicket}/close`, 'POST');
       fetchTickets();
       const t = tickets.find(t => t.channelId === activeTicket);
       if (t) t.status = 'closed';

@@ -23,13 +23,10 @@ export default function AvisPage() {
     setError("");
     
     try {
-      const res = await secureFetch('/api-bot/avis', {
-        method: 'POST',
-        body: JSON.stringify({
-          note: rating,
-          commentaire: comment,
-          userId: session?.user?.id
-        })
+      const res = await secureFetch('/api-bot/avis', 'POST', {
+        note: rating,
+        commentaire: comment,
+        userId: session?.user?.id
       });
       
       if (res.ok) {

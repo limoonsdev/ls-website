@@ -164,6 +164,21 @@ export default function Topbar() {
                   <span>Panel Admin</span>
                 </Link>
               )}
+
+              <div className={styles.mobileLangSwitch}>
+                <button
+                  className={`${styles.langBtn} ${lang === "en" ? styles.langActive : ""}`}
+                  onClick={() => { switchLang("en"); setMobileOpen(false); }}
+                >
+                  EN
+                </button>
+                <button
+                  className={`${styles.langBtn} ${lang === "fr" ? styles.langActive : ""}`}
+                  onClick={() => { switchLang("fr"); setMobileOpen(false); }}
+                >
+                  FR
+                </button>
+              </div>
             </nav>
           </motion.div>
         )}

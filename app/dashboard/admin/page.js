@@ -118,9 +118,10 @@ export default function AdminPanel() {
     if (!newMessage.trim() || !activeTicket) return;
     setMsgLoading(true);
     try {
-      const res = await secureFetch(`/api-bot/tickets/${activeTicket.channelId}/reply`, {
-        method: "POST",
-        body: JSON.stringify({ message: newMessage, username: session?.user?.name || "Staff", isAdmin: true })
+      const res = await secureFetch(`/api-bot/tickets/${activeTicket.channelId}/reply`, 'POST', { 
+        message: newMessage, 
+        username: session?.user?.name || "Staff", 
+        isAdmin: true 
       });
       if (res.ok) {
         setNewMessage("");
@@ -136,7 +137,7 @@ export default function AdminPanel() {
     if (!activeTicket) return;
     if (!confirm("Fermer ce ticket ?")) return;
     try {
-      const res = await secureFetch(`/api-bot/tickets/${activeTicket.channelId}/close`, { method: "POST" });
+      const res = await secureFetch(`/api-bot/tickets/${activeTicket.channelId}/close`, 'POST');
       if (res.ok) {
         showNotif("Ticket fermé");
         setTickets(tickets.map(t => t.id === activeTicket.id ? { ...t, status: "closed" } : t));

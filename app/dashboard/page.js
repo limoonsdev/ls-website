@@ -1,11 +1,18 @@
 "use client";
 
+import { secureFetch } from "@/lib/crypto";
 import { useState, useEffect } from "react";
+import { secureFetch } from "@/lib/crypto";
 import { motion } from "framer-motion";
+import { secureFetch } from "@/lib/crypto";
 import { Zap, Users, Package, Clock, Trophy, ArrowRight, TrendingUp } from "lucide-react";
+import { secureFetch } from "@/lib/crypto";
 import { useSession } from "next-auth/react";
+import { secureFetch } from "@/lib/crypto";
 import { useTranslation } from "@/lib/i18n";
+import { secureFetch } from "@/lib/crypto";
 import Link from "next/link";
+import { secureFetch } from "@/lib/crypto";
 import styles from "./overview.module.css";
 
 export default function Overview() {
@@ -20,14 +27,14 @@ export default function Overview() {
     const fetchAll = async () => {
       try {
         const [statsRes, lbRes] = await Promise.all([
-          fetch("/api-bot/stats").then(r => r.json()).catch(() => null),
-          fetch("/api-bot/leaderboard").then(r => r.json()).catch(() => []),
+          secureFetch("/api-bot/stats").then(r => r.json()).catch(() => null),
+          secureFetch("/api-bot/leaderboard").then(r => r.json()).catch(() => []),
         ]);
         setStats(statsRes);
         setLeaderboard(Array.isArray(lbRes) ? lbRes.slice(0, 5) : []);
 
         if (session?.user?.id) {
-          const histRes = await fetch(`/api-bot/history/${session.user.id}?limit=5`).then(r => r.json()).catch(() => []);
+          const histRes = await secureFetch(`/api-bot/history/${session.user.id}?limit=5`).then(r => r.json()).catch(() => []);
           setRecentHistory(Array.isArray(histRes) ? histRes : []);
         }
       } catch (e) {
@@ -194,3 +201,4 @@ export default function Overview() {
     </div>
   );
 }
+

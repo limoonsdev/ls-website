@@ -1,8 +1,12 @@
 'use client';
 
+import { secureFetch } from "@/lib/crypto";
 import { useEffect, useState } from 'react';
+import { secureFetch } from "@/lib/crypto";
 import { useTranslation } from '@/lib/i18n';
+import { secureFetch } from "@/lib/crypto";
 import { signIn, useSession } from 'next-auth/react';
+import { secureFetch } from "@/lib/crypto";
 import { useRouter } from 'next/navigation';
 
 export default function Home() {
@@ -30,7 +34,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    fetch('/api-bot/stats')
+    secureFetch('/api-bot/stats')
       .then(res => res.json())
       .then(data => {
         if (data.users) setStats(data);
@@ -114,3 +118,4 @@ export default function Home() {
     </>
   );
 }
+

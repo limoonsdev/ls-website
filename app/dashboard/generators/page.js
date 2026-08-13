@@ -1,10 +1,16 @@
 "use client";
 
+import { secureFetch } from "@/lib/crypto";
 import { useState, useEffect, useMemo } from "react";
+import { secureFetch } from "@/lib/crypto";
 import { motion, AnimatePresence } from "framer-motion";
+import { secureFetch } from "@/lib/crypto";
 import { Zap, Copy, Check, X, Search } from "lucide-react";
+import { secureFetch } from "@/lib/crypto";
 import { useSession } from "next-auth/react";
+import { secureFetch } from "@/lib/crypto";
 import { useTranslation } from "@/lib/i18n";
+import { secureFetch } from "@/lib/crypto";
 import styles from "./generators.module.css";
 
 const CATEGORIES = [
@@ -28,14 +34,14 @@ export default function Generators() {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    fetch("/api-bot/services/stock")
+    secureFetch("/api-bot/services/stock")
       .then(res => res.json())
       .then(data => {
         setServices(Array.isArray(data) ? data : []);
         setLoading(false);
       })
       .catch(() => {
-        fetch("/api-bot/services")
+        secureFetch("/api-bot/services")
           .then(res => res.json())
           .then(data => {
             setServices((Array.isArray(data) ? data : []).map(s => ({ ...s, stock: '?' })));
@@ -244,3 +250,4 @@ export default function Generators() {
     </div>
   );
 }
+

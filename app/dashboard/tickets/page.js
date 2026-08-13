@@ -1,10 +1,16 @@
 "use client";
 
+import { secureFetch } from "@/lib/crypto";
 import { useState, useEffect, useRef } from "react";
+import { secureFetch } from "@/lib/crypto";
 import { motion, AnimatePresence } from "framer-motion";
+import { secureFetch } from "@/lib/crypto";
 import { Send, Plus, ArrowLeft, Lock, MessageSquare } from "lucide-react";
+import { secureFetch } from "@/lib/crypto";
 import { useSession } from "next-auth/react";
+import { secureFetch } from "@/lib/crypto";
 import { useTranslation } from "@/lib/i18n";
+import { secureFetch } from "@/lib/crypto";
 import styles from "./tickets.module.css";
 
 export default function Tickets() {
@@ -70,7 +76,7 @@ export default function Tickets() {
     setCreateLoading(true);
     
     try {
-      const res = await fetch("/api-bot/tickets", {
+      const res = await fetch("/api/tickets", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -103,7 +109,7 @@ export default function Tickets() {
     setNewMessage(""); // Optimistic clear
     
     try {
-      await fetch(`/api-bot/tickets/${activeTicket}/reply`, {
+      await secureFetch(`/api-bot/tickets/${activeTicket}/reply`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -113,7 +119,7 @@ export default function Tickets() {
         })
       });
       // Fetch immediately to show the new message
-      const res = await fetch(`/api-bot/tickets/${session?.user?.id}/${activeTicket}`);
+      const res = await secureFetch(`/api-bot/tickets/${session?.user?.id}/${activeTicket}`);
       const data = await res.json();
       if (Array.isArray(data)) setMessages(data);
     } catch(err) {
@@ -126,7 +132,7 @@ export default function Tickets() {
   const handleCloseTicket = async () => {
     if (!activeTicket) return;
     try {
-      await fetch(`/api-bot/tickets/${activeTicket}/close`, { method: "POST" });
+      await secureFetch(`/api-bot/tickets/${activeTicket}/close`, { method: "POST" });
       fetchTickets();
       const t = tickets.find(t => t.channelId === activeTicket);
       if (t) t.status = 'closed';
@@ -349,3 +355,5 @@ export default function Tickets() {
     </div>
   );
 }
+
+

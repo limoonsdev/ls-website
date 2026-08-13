@@ -1,10 +1,16 @@
 "use client";
 
+import { secureFetch } from "@/lib/crypto";
 import { useState, useEffect } from "react";
+import { secureFetch } from "@/lib/crypto";
 import { motion } from "framer-motion";
+import { secureFetch } from "@/lib/crypto";
 import { Check, Star } from "lucide-react";
+import { secureFetch } from "@/lib/crypto";
 import { useTranslation } from "@/lib/i18n";
+import { secureFetch } from "@/lib/crypto";
 import { toast } from "react-hot-toast";
+import { secureFetch } from "@/lib/crypto";
 import styles from "./shop.module.css";
 
 export default function Shop() {
@@ -13,7 +19,7 @@ export default function Shop() {
   const [loading, setLoading] = useState(true);
   
   useEffect(() => {
-    fetch("/api-bot/shop")
+    secureFetch("/api-bot/shop")
       .then(res => res.json())
       .then(data => {
         setPlans(Array.isArray(data) ? data : []);
@@ -73,3 +79,4 @@ export default function Shop() {
     </div>
   );
 }
+

@@ -1,14 +1,20 @@
 "use client";
 
+import { secureFetch } from "@/lib/crypto";
 import { useSession } from "next-auth/react";
+import { secureFetch } from "@/lib/crypto";
 import { useRouter } from "next/navigation";
+import { secureFetch } from "@/lib/crypto";
 import { useState, useEffect } from "react";
+import { secureFetch } from "@/lib/crypto";
 import { motion, AnimatePresence } from "framer-motion";
+import { secureFetch } from "@/lib/crypto";
 import { 
   Database, Users, ShieldAlert, Settings, Package, Upload,
   Plus, Trash2, Search, RefreshCw, BarChart3, 
   MessageSquare, Crown, AlertTriangle, CheckCircle, X
 } from "lucide-react";
+import { secureFetch } from "@/lib/crypto";
 import styles from "./admin.module.css";
 
 const ADMIN_ID = "1178305844698435625";
@@ -49,7 +55,7 @@ export default function AdminPanel() {
       return;
     }
     if (session?.user?.id) {
-      fetch('/api-bot/admin/staff')
+      secureFetch('/api-bot/admin/staff')
         .then(r => r.ok ? r.json() : [])
         .then(staff => {
           if (Array.isArray(staff) && staff.includes(session.user.id)) {
@@ -67,11 +73,11 @@ export default function AdminPanel() {
 
   useEffect(() => {
     Promise.all([
-      fetch('/api-bot/services/stock').then(r => r.ok ? r.json() : []),
-      fetch('/api-bot/leaderboard').then(r => r.ok ? r.json() : []),
-      fetch('/api-bot/admin/staff').then(r => r.ok ? r.json() : []),
-      fetch('/api-bot/admin/maintenance').then(r => r.ok ? r.json() : null),
-      fetch('/api-bot/shop').then(r => r.ok ? r.json() : []),
+      secureFetch('/api-bot/services/stock').then(r => r.ok ? r.json() : []),
+      secureFetch('/api-bot/leaderboard').then(r => r.ok ? r.json() : []),
+      secureFetch('/api-bot/admin/staff').then(r => r.ok ? r.json() : []),
+      secureFetch('/api-bot/admin/maintenance').then(r => r.ok ? r.json() : null),
+      secureFetch('/api-bot/shop').then(r => r.ok ? r.json() : []),
     ]).then(([s, u, st, maint, shop]) => {
       setServices(Array.isArray(s) ? s : []);
       setUsers(Array.isArray(u) ? u : []);
@@ -99,7 +105,7 @@ export default function AdminPanel() {
   };
 
   const refreshServices = () => {
-    fetch('/api-bot/services/stock')
+    secureFetch('/api-bot/services/stock')
       .then(r => r.ok ? r.json() : [])
       .then(d => {
         setServices(Array.isArray(d) ? d : []);
@@ -110,11 +116,7 @@ export default function AdminPanel() {
   // Save Shop
   const saveShopItems = async (newItems) => {
     try {
-      const res = await fetch('/api-bot/admin/shop', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ shopItems: newItems })
-      });
+      const res = await secureFetch('/api-bot/admin/shop', 'POST', { shopItems: newItems });
       if (res.ok) {
         setShopItems(newItems);
         showNotif("Boutique mise à jour !");
@@ -138,11 +140,7 @@ export default function AdminPanel() {
   // Staff CRUD
   const saveStaffIds = async (newIds) => {
     try {
-      const res = await fetch('/api-bot/admin/staff', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ staffIds: newIds })
-      });
+      const res = await secureFetch('/api-bot/admin/staff', 'POST', { staffIds: newIds });
       if (res.ok) {
         setStaffIds(newIds);
         showNotif("Staff mis à jour !");
@@ -166,11 +164,7 @@ export default function AdminPanel() {
   // Maintenance
   const saveMaintenance = async (newState, newMsg) => {
     try {
-      const res = await fetch('/api-bot/admin/maintenance', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ maintenance: newState, message: newMsg })
-      });
+      const res = await secureFetch('/api-bot/admin/maintenance', 'POST', { maintenance: newState, message: newMsg });
       if (res.ok) {
         showNotif(newState ? "🔴 Maintenance ACTIVÉE" : "🟢 Maintenance DÉSACTIVÉE");
       }
@@ -187,11 +181,7 @@ export default function AdminPanel() {
     }
     setRestockLoading(true);
     try {
-      const res = await fetch('/api-bot/admin/restock', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ serviceId: restockService, combos: restockCombos })
-      });
+      const res = await secureFetch('/api-bot/admin/restock', 'POST', { serviceId: restockService, combos: restockCombos });
       const data = await res.json();
       if (data.success) {
         showNotif(`✅ ${data.added} comptes ajoutés à ${restockService} (${data.skipped} doublons ignorés)`);
@@ -210,11 +200,7 @@ export default function AdminPanel() {
   const handleClearStock = async (serviceId, label) => {
     if (!confirm(`⚠️ Supprimer TOUS les comptes de ${label} ?`)) return;
     try {
-      const res = await fetch('/api-bot/admin/clear-stock', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ serviceId })
-      });
+      const res = await secureFetch('/api-bot/admin/clear-stock', 'POST', { serviceId });
       const data = await res.json();
       if (data.success) {
         showNotif(`🗑️ ${data.deleted} comptes supprimés de ${label}`);
@@ -291,7 +277,7 @@ export default function AdminPanel() {
                 </div>
               </div>
               <div className={styles.statCard}>
-                <div className={styles.statIcon} style={{background:"rgba(255,71,133,0.1)", color:"#ff4785"}}><Database size={24} /></div>
+                <div className={styles.statIcon} style={{background:"rgba(255,23,68,0.1)", color:"#ff1744"}}><Database size={24} /></div>
                 <div className={styles.statInfo}>
                   <span className={styles.statValue}>{activeServices}</span>
                   <span className={styles.statLabel}>Services actifs</span>
@@ -451,7 +437,7 @@ export default function AdminPanel() {
               <h3>Top Utilisateurs (Leaderboard)</h3>
               <button className={styles.stockClearBtn} onClick={async () => {
                 if(confirm("⚠️ Confirmer le reset total du classement ?")) {
-                  await fetch('/api-bot/admin/reset-leaderboard', { method: 'POST' });
+                  await secureFetch('/api-bot/admin/reset-leaderboard', 'POST');
                   showNotif("Classement réinitialisé !");
                   setUsers([]);
                 }
@@ -502,7 +488,7 @@ export default function AdminPanel() {
 
               {/* Maintenance */}
               <div className={styles.configCard}>
-                <h3><AlertTriangle size={18} style={{ color: "#ff4785" }} /> Mode Maintenance Globale</h3>
+                <h3><AlertTriangle size={18} style={{ color: "#ff1744" }} /> Mode Maintenance Globale</h3>
                 <div className={styles.configRow}>
                   <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.85rem", margin: 0, paddingBottom: "10px" }}>
                     Bloque l'accès à tout le site (sauf pour toi).
@@ -518,7 +504,7 @@ export default function AdminPanel() {
                     }}
                     style={{
                       padding: "8px 20px", borderRadius: "20px", border: "none", 
-                      background: maintenance ? "#ff4785" : "rgba(255,255,255,0.1)",
+                      background: maintenance ? "#ff1744" : "rgba(255,255,255,0.1)",
                       color: "white", fontWeight: "bold", cursor: "pointer", transition: "0.3s",
                       fontSize: "0.9rem"
                     }}
@@ -589,7 +575,7 @@ export default function AdminPanel() {
                     <div key={item.id} className={styles.staffItem}>
                       <div>
                         <span className={styles.staffId}>{item.name}</span>
-                        <span style={{color:"#00f0ff", marginLeft:"10px", fontSize:"0.8rem"}}>{item.price}€</span>
+                        <span style={{color:"#ffffff", marginLeft:"10px", fontSize:"0.8rem"}}>{item.price}€</span>
                       </div>
                       <button className={styles.staffRemoveBtn} onClick={() => removeShopItem(item.id)}>
                         <Trash2 size={14} />
@@ -618,3 +604,4 @@ export default function AdminPanel() {
     </div>
   );
 }
+

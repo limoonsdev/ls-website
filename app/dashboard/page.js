@@ -121,7 +121,7 @@ export default function Overview() {
                 <div key={user.userId} className={styles.lbItem}>
                   <span className={styles.lbRank}>{getRankIcon(i)}</span>
                   {user.avatar ? (
-                    <img src={user.avatar} alt="" className={styles.lbAvatar} crossOrigin="anonymous" />
+                    <img src={user.avatar} alt="" className={styles.lbAvatar} />
                   ) : (
                     <div className={styles.lbAvatarPlaceholder}>
                       {user.username?.[0]?.toUpperCase() || "?"}

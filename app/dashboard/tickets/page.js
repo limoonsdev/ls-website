@@ -2,15 +2,10 @@
 
 import { secureFetch } from "@/lib/crypto";
 import { useState, useEffect, useRef } from "react";
-import { secureFetch } from "@/lib/crypto";
 import { motion, AnimatePresence } from "framer-motion";
-import { secureFetch } from "@/lib/crypto";
 import { Send, Plus, ArrowLeft, Lock, MessageSquare } from "lucide-react";
-import { secureFetch } from "@/lib/crypto";
 import { useSession } from "next-auth/react";
-import { secureFetch } from "@/lib/crypto";
 import { useTranslation } from "@/lib/i18n";
-import { secureFetch } from "@/lib/crypto";
 import styles from "./tickets.module.css";
 
 export default function Tickets() {
@@ -355,5 +350,6 @@ export default function Tickets() {
     </div>
   );
 }
+
 
 

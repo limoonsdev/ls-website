@@ -2,19 +2,14 @@
 
 import { secureFetch } from "@/lib/crypto";
 import { useSession } from "next-auth/react";
-import { secureFetch } from "@/lib/crypto";
 import { useRouter } from "next/navigation";
-import { secureFetch } from "@/lib/crypto";
 import { useState, useEffect } from "react";
-import { secureFetch } from "@/lib/crypto";
 import { motion, AnimatePresence } from "framer-motion";
-import { secureFetch } from "@/lib/crypto";
 import { 
   Database, Users, ShieldAlert, Settings, Package, Upload,
   Plus, Trash2, Search, RefreshCw, BarChart3, 
   MessageSquare, Crown, AlertTriangle, CheckCircle, X
 } from "lucide-react";
-import { secureFetch } from "@/lib/crypto";
 import styles from "./admin.module.css";
 
 const ADMIN_ID = "1178305844698435625";
@@ -604,4 +599,5 @@ export default function AdminPanel() {
     </div>
   );
 }
+
 

@@ -2,11 +2,8 @@
 
 import { secureFetch } from "@/lib/crypto";
 import { useState, useEffect } from "react";
-import { secureFetch } from "@/lib/crypto";
 import { motion } from "framer-motion";
-import { secureFetch } from "@/lib/crypto";
 import { Activity, Server, Database, Globe, ShieldCheck, Zap } from "lucide-react";
-import { secureFetch } from "@/lib/crypto";
 import styles from "./status.module.css";
 
 export default function StatusPage() {
@@ -134,4 +131,5 @@ export default function StatusPage() {
     </div>
   );
 }
+
 

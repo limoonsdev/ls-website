@@ -2,15 +2,10 @@
 
 import { secureFetch } from "@/lib/crypto";
 import { useState, useEffect, useMemo } from "react";
-import { secureFetch } from "@/lib/crypto";
 import { motion, AnimatePresence } from "framer-motion";
-import { secureFetch } from "@/lib/crypto";
 import { Zap, Copy, Check, X, Search } from "lucide-react";
-import { secureFetch } from "@/lib/crypto";
 import { useSession } from "next-auth/react";
-import { secureFetch } from "@/lib/crypto";
 import { useTranslation } from "@/lib/i18n";
-import { secureFetch } from "@/lib/crypto";
 import styles from "./generators.module.css";
 
 const CATEGORIES = [
@@ -250,4 +245,5 @@ export default function Generators() {
     </div>
   );
 }
+
 

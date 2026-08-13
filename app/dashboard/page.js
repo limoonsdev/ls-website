@@ -2,17 +2,11 @@
 
 import { secureFetch } from "@/lib/crypto";
 import { useState, useEffect } from "react";
-import { secureFetch } from "@/lib/crypto";
 import { motion } from "framer-motion";
-import { secureFetch } from "@/lib/crypto";
 import { Zap, Users, Package, Clock, Trophy, ArrowRight, TrendingUp } from "lucide-react";
-import { secureFetch } from "@/lib/crypto";
 import { useSession } from "next-auth/react";
-import { secureFetch } from "@/lib/crypto";
 import { useTranslation } from "@/lib/i18n";
-import { secureFetch } from "@/lib/crypto";
 import Link from "next/link";
-import { secureFetch } from "@/lib/crypto";
 import styles from "./overview.module.css";
 
 export default function Overview() {
@@ -201,4 +195,5 @@ export default function Overview() {
     </div>
   );
 }
+
 

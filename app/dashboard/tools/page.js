@@ -8,7 +8,7 @@ import { useTranslation } from "@/lib/i18n";
 import { toast } from "react-hot-toast";
 import styles from "./tools.module.css";
 
-const MAIL_API = "https://api.mail.tm";
+const MAIL_API = "/api-mail";
 
 export default function PrimeMail() {
   const { data: session } = useSession();
